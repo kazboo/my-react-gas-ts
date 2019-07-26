@@ -5,6 +5,12 @@
   "main": "index.ts",
   "license": "none",
   "private": true,
+  "scripts": {
+    "build": "yarn run webpack",
+    "push": "yarn run webpack && clasp push",
+    "deploy": "yarn run webpack && clasp push && clasp deploy && clasp open",
+    "undeploy": "clasp undeploy"
+  },
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",

@@ -22,6 +22,11 @@ interface DelayProps {
 
 }
 
+interface PostResponse {
+    message: string;
+    delayList: DelayInfo[];
+}
+
 class Delay extends React.Component<DelayProps, State> {
     constructor(props: DelayProps) {
       super(props);
@@ -31,27 +36,51 @@ class Delay extends React.Component<DelayProps, State> {
         delayList: []
       };
     }
-  
+
+
     componentDidMount() {
-        fetch("https://tetsudo.rti-giken.jp/free/delay.json", {
-            method: 'GET',
-            mode: 'cors'
-        })
-        .then(response => response.json())
-        .then(
-            result => {
+
+        // server側コードでhtml返却時、evaluate()が必要
+        google.script.run
+            .withSuccessHandler((response: PostResponse) => {
                 this.setState({
                     isLoaded: true,
-                    delayList: result
-                });
-            },
-            error => {
+                    delayList: response.delayList
+                })
+            })
+            .withFailureHandler((response: ErrorResult) => {
                 this.setState({
                     isLoaded: true,
-                    error
-                });
-            }
-        )
+                    error: response
+                })
+            })
+            .doPost();
+        
+        // 以下は401エラー。あきらめた。
+        // console.log('<? var url = getScriptUrl(); ?>');
+        // fetch('<?=url?>', {
+        //     method: "POST",
+        //     mode: 'cors',
+        //     credentials: 'include',
+        //     body: JSON.stringify({
+        //         value: "aaa"
+        //     })
+        // })
+        // .then(response => response.json())
+        // .then(
+        //     result => {
+        //         this.setState({
+        //             isLoaded: true,
+        //             delayList: result
+        //         });
+        //     },
+        //     error => {
+        //         this.setState({
+        //             isLoaded: true,
+        //             error
+        //         });
+        //     }
+        // )
     }
   
     render() {
@@ -59,7 +88,7 @@ class Delay extends React.Component<DelayProps, State> {
         if (error) {
             return (
                 <div>
-                    Error: { error.message }
+                    { error.message }
                 </div>
             );
 
