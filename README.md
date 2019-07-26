@@ -5,9 +5,26 @@
 
 ## Usage
 
+### build
+
 ```
-$ yarn run webpack
-$ clasp push
-$ clasp deploy
-$ clasp open
+yarn build
+```
+
+### build & push
+
+```
+yarn push
+```
+
+### build & push & deploy
+
+```
+yarn deploy
+```
+
+### undeploy
+
+```
+yarn undeploy
 ```
