@@ -1,8 +1,11 @@
 function doGet() {
-    return HtmlService.createTemplateFromFile('index').evaluate();
+    return HtmlService.createTemplateFromFile('index')
+        .evaluate()
+        .setTitle('React, TypeScript on GAS Sample')
+        .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 };
 
-function doPost() {
+function getDelayList() {
     return {
             message: `success!`,
             delayList: [

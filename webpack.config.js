@@ -66,7 +66,7 @@ module.exports = {
             [
                 {
                     from: path.resolve(__dirname, 'src/'),
-                    ignore: ['*.tsx', '*.html']
+                    ignore: ['*.tsx', '*.html', '*.js']
                 }
             ]
         )
