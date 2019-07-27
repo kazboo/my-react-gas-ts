@@ -24,3 +24,18 @@ function getDelayList() {
             ]
         };
 }
+
+function getBookList() {
+
+    const response = UrlFetchApp.fetch(
+        'https://www.googleapis.com/books/v1/volumes?q=GoogleAppsScript',
+        {
+            method: 'get'
+        });
+    
+    if (response.getResponseCode() === 200) {
+        const content: string = response.getContentText();
+        return JSON.parse(content);
+    }
+    throw new Error('failed to get book information.');
+}

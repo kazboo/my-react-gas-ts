@@ -1,12 +1,12 @@
 import React from 'react';
 import Paper from '@material-ui/core/Paper'
 
-interface DelayPaperProps {
+interface Props {
     name: string;
     company: string;
 }
 
-const DelayPaper: React.FC<DelayPaperProps> = (props) => {
+const DelayPaper: React.FC<Props> = (props) => {
     return (
         <Paper>
             <p style={{padding: '10px'}}>{ props.name }</p>

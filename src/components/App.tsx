@@ -2,6 +2,7 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import Space from './Space';
 import DelayInformation from './DelayInformation';
+import BookInformation from './BookInformation';
 
 const App: React.FC = () => {
   return (
@@ -15,6 +16,8 @@ const App: React.FC = () => {
         <Space />
 
         <DelayInformation />
+
+        <BookInformation />
 
     </div>
   )
