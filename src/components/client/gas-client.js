@@ -17,6 +17,13 @@ const GasClient = {
             .withFailureHandler(error)
             .getBookList();
     },
+
+    getBookJoinList(success, error) {
+        google.script.run
+            .withSuccessHandler(success)
+            .withFailureHandler(error)
+            .getBookJoinList();
+    }
 }
 
 export default GasClient;

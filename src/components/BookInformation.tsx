@@ -44,7 +44,7 @@ class BookInformation extends React.Component<Props, State> {
         
     componentDidMount() {
 
-        GasClient.getBookList(
+        GasClient.getBookJoinList(
             (result: GetBookListResult) => {
                 this.setState({
                     isLoaded: true,

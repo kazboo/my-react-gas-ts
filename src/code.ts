@@ -39,3 +39,29 @@ function getBookList() {
     }
     throw new Error('failed to get book information.');
 }
+
+function getBookJoinList() {
+
+    const responses = UrlFetchApp.fetchAll(
+        [
+            {
+                url: 'https://www.googleapis.com/books/v1/volumes?q=GoogleAppsScript',
+                method: 'get'
+            },
+            {
+                url: 'https://www.googleapis.com/books/v1/volumes?q=GoogleCloudPlatform',
+                method: 'get'
+            }
+        ]
+    );
+
+    const jsons = responses
+        .filter(
+            res => res.getResponseCode() === 200)
+        .map(
+            res => JSON.parse(res.getContentText()));
+
+    jsons[0].items = jsons[0].items.concat(jsons[1].items);
+    
+    return jsons[0];
+}
