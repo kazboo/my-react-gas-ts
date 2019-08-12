@@ -2,8 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/App'
 import teal from '@material-ui/core/colors/teal'
-import { MuiThemeProvider } from '@material-ui/core/styles';
-import { createMuiTheme } from '@material-ui/core/styles';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 const theme = createMuiTheme({
     palette: {
@@ -15,7 +14,7 @@ const theme = createMuiTheme({
               color: '#fff',
               background: 'linear-gradient(180deg, #009688 10%, #ff8f00 90%)'
           }
-      },
+      }
     }
 });
 
