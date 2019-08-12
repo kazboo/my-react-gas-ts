@@ -1,14 +1,21 @@
 {
-  "compilerOptions": {
-    "target": "es5",
-    "allowJs": true,
-    "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "jsx": "react"
-  },
-  "include": [
-    "src"
-  ]
+    "compilerOptions": {
+        /* ECMAScriptのターゲットバージョンを指定します: 'ES3'（デフォルト）, 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018'または 'ESNEXT' */
+        "target": "es5",
+        /* javascriptファイルをコンパイルできるようにします。 */
+        "allowJs": true,
+        /* Skip type checking of all declaration files (*.d.ts). */
+        "skipLibCheck": true,
+        /* デフォルトのエクスポートがないモジュールからのデフォルトのインポートを許可します。これはコードの出力には影響しません。型検査だけです。 */
+        "allowSyntheticDefaultImports": true,
+        /* モジュール解決戦略を指定する: 'node'（Node.js）または 'classic'（TypeScript pre-1.6）。 */
+        "moduleResolution": "node",
+        /* allows for importing, extracting types from and generating .json files */
+        "resolveJsonModule": true,
+        /* JSXコード生成を指定する: 'preserve', 'react-native', 'react' */
+        "jsx": "react"
+    },
+    "include": [
+        "src"
+    ]
 }
