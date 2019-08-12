@@ -1,7 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const GasPlugin = require('gas-webpack-plugin');
-const Es3ifyPlugin = require('es3ify-webpack-plugin');
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
 const CopyWebPackPlugin = require('copy-webpack-plugin');
 
@@ -42,7 +41,6 @@ module.exports = {
     },
     plugins: [
         new GasPlugin(),
-        new Es3ifyPlugin(),
         new HtmlWebpackPlugin({
             template: "./index.html",
             inject: true,

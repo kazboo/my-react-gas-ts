@@ -1,5 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './components/sample/App'
+import App from './components/App'
+import teal from '@material-ui/core/colors/teal'
+import { MuiThemeProvider } from '@material-ui/core/styles';
+import { createMuiTheme } from '@material-ui/core/styles';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const theme = createMuiTheme({
+    palette: {
+      primary: teal
+    },
+    overrides: {
+      MuiDrawer: {
+          paper: {
+              color: '#fff',
+              background: 'linear-gradient(180deg, #009688 10%, #ff8f00 90%)'
+          }
+      },
+    }
+});
+
+ReactDOM.render(
+    <MuiThemeProvider theme={theme}>
+        <App />
+    </MuiThemeProvider>,
+    document.getElementById('root')
+);
