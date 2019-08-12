@@ -1,5 +1,5 @@
 import React from 'react';
-import GasClient from './client/gas-client'
+import GasClient from '../client/gas-client'
 import DelayPaperContainer from './DelayPaperContainer';
 import LoadingAnimation from './LoadingAnimation';
 import ErrorInformation from './ErrorInformation';

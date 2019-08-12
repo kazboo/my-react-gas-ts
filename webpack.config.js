@@ -1,4 +1,3 @@
-// const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const GasPlugin = require('gas-webpack-plugin');
@@ -19,12 +18,6 @@ module.exports = {
         'react': 'React',
         'react-dom': 'ReactDOM'
     },
-    // HtmlWebpackInlineSourcePlugin でdistディレクトリに出力するため、ひとまず不要
-    // output: {
-    //     filename: "[name].bundle.js?[hash]",
-    //     // ビルド後のファイルが出力される"絶対パス"ディレクトリ
-    //     path: path.resolve(__dirname, './build')
-    // },
     resolve: {
         extensions: ['.ts', '.tsx', '.js']
     },
