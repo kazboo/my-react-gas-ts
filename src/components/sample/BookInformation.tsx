@@ -1,5 +1,5 @@
 import React from 'react';
-import GasClient from '../client/gas-client';
+import GasClient from '../../client/gas-client';
 import LoadingAnimation from './LoadingAnimation';
 import ErrorInformation from './ErrorInformation';
 import BookPaperContainer from './BookPaperContainer';

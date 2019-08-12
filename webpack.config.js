@@ -57,7 +57,7 @@ module.exports = {
             [
                 {
                     from: path.resolve(__dirname, 'src/'),
-                    ignore: ['*.tsx', '*.html', '*.js']
+                    ignore: ['*.tsx', '*.html', 'client/*.ts']
                 }
             ]
         )
