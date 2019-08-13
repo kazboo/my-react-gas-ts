@@ -4,32 +4,37 @@
  */ 
 const GasClient = {
     
-    getDelayList(success, error) {
+    getDelayList(success: any, error: any) {
         google.script.run
             .withSuccessHandler(success)
             .withFailureHandler(error)
             .getDelayList();
     },
 
-    getBookList(success, error) {
+    getBookList(success: any, error: any) {
         google.script.run
             .withSuccessHandler(success)
             .withFailureHandler(error)
             .getBookList();
     },
 
-    getBookJoinList(success, error) {
+    getBookJoinList(success: any, error: any) {
         google.script.run
             .withSuccessHandler(success)
             .withFailureHandler(error)
             .getBookJoinList();
     },
 
-    getWorkingHours(username: string, password: string, success, error) {
+    getWorkingHours(
+        username: string,
+        password: string,
+        week: string,
+        success: any,
+        error: any) {
         google.script.run
             .withSuccessHandler(success)
             .withFailureHandler(error)
-            .getWorkingHours(username, password);
+            .getWorkingHours(username, password, week);
     }
 }
 
