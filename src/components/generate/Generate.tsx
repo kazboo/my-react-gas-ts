@@ -4,22 +4,28 @@ import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Card from '@material-ui/core/Card';
+import Divider from '@material-ui/core/Divider';
 import GetReportIcon from '@material-ui/icons/SaveAlt';
 import GenerateIcon from '@material-ui/icons/Create';
 import GasClient from '../../client/gas-client'
 
 const useStyles = makeStyles(theme => ({
     button: {
-      margin: theme.spacing(1),
+        margin: theme.spacing(1),
     },
     rightIcon: {
-      marginLeft: theme.spacing(1),
+        marginLeft: theme.spacing(1),
     },
     textField: {
-        marginBottom: '10px',
         marginTop: '10px',
-        fontSize: '0.5rem'
+        marginBottom: '10px',
+    },
+    checkBox: {
+    },
+    divider: {
+        marginBottom: '20px',
     }
 }));
 
@@ -47,6 +53,8 @@ const Generate: React.FC<Props> = (props) => {
     const [kinjirouUserName, setkinjirouUserName] = React.useState("");
     /**　入力情報: 勤次郎パスワード */
     const [kinjirouPassword, setkinjirouPassword] = React.useState("");
+    /**　取得する期間 */
+    const [dateRange, setDateRange] = React.useState("");
 
     function parseWorkingHours(whs: WorkingHour[]) {
         if (!whs) {
@@ -60,11 +68,11 @@ const Generate: React.FC<Props> = (props) => {
     }
 
     function getWorkingHours() {
-        alert(`user:${kinjirouUserName}, pass:${kinjirouPassword}`);
         
         GasClient.getWorkingHours(
             kinjirouUserName,
             kinjirouPassword,
+            dateRange,
             (result: WorkingHour[]) => setWorkingHours(parseWorkingHours(result)),
             () => setErrorMsg("failed to get working hours.")
         );
@@ -81,6 +89,10 @@ const Generate: React.FC<Props> = (props) => {
     const handleKinjiroPasswordTextFieldChange = (event: GetWorkingHoursEvent) => {
         setkinjirouPassword(event.target.value);
     };
+
+    const handleDateRangeChange = (event: GetWorkingHoursEvent) => {
+        setDateRange(event.target.value);
+    }
 
     return (
         <>
@@ -153,32 +165,50 @@ const Generate: React.FC<Props> = (props) => {
                             id="input-kinjirou-password"
                             label="パスワード"
                             variant="outlined"
+                            fullWidth={true}
                             type="password"
                             autoComplete="current-password"
-                            fullWidth={true}
                             margin="dense"
                             onChange={handleKinjiroPasswordTextFieldChange}
                             className={classes.textField}
                         />
                         <div>
-                            <Checkbox
-                                defaultChecked
-                                color="default"
-                                value="remember"
-                                inputProps={{
-                                    'aria-label': 'checkbox with default color',
-                                }}
-                            />
-                            remember
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        id="checkbox-remember"
+                                        defaultChecked
+                                        color="default"
+                                        value="remember"
+                                        className={classes.checkBox}
+                                    />
+                                }
+                                label="remember" />
                         </div>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            className={classes.button}
-                            onClick={getWorkingHours}>
-                            取得
-                            <GetReportIcon className={classes.rightIcon} />
-                        </Button>
+
+                        <Divider className={classes.divider} />
+
+                        <TextField
+                            id="select-date-range"
+                            label="取得する期間"
+                            fullWidth={true}
+                            InputLabelProps={{ shrink: true }}
+                            className={classes.textField}
+                            onChange={handleDateRangeChange}
+                            helperText="取得する週を選択してください"
+                            margin="dense"
+                            type="week"
+                            variant="outlined" />
+                        <div style={{textAlign:'right'}}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                className={classes.button}
+                                onClick={getWorkingHours}>
+                                取得
+                                <GetReportIcon className={classes.rightIcon} />
+                            </Button>
+                        </div>
                         <TextField
                             id="input-kinjirou-workinghours"
                             label="取得結果"
@@ -198,10 +228,12 @@ const Generate: React.FC<Props> = (props) => {
                 {/* 週報生成 */}
                 <Grid item={true} xs={12} md={12}>
                     <Card style={{ padding:'10px', height:'100%' }}>
-                        <Button variant="contained" color="primary" className={classes.button}>
-                            生成
-                            <GenerateIcon className={classes.rightIcon} />
-                        </Button>
+                        <div style={{textAlign:'right'}}>
+                            <Button variant="contained" color="primary" className={classes.button}>
+                                生成
+                                <GenerateIcon className={classes.rightIcon} />
+                            </Button>
+                        </div>
                         <TextField
                             id="input-generate-result"
                             label="生成結果"
@@ -210,6 +242,7 @@ const Generate: React.FC<Props> = (props) => {
                             multiline={true}
                             margin="dense"
                             className={classes.textField}
+                            InputLabelProps={{ shrink: true }}
                         />
                     </Card>
                 </Grid>
