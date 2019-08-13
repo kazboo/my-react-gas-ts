@@ -23,6 +23,13 @@ const GasClient = {
             .withSuccessHandler(success)
             .withFailureHandler(error)
             .getBookJoinList();
+    },
+
+    getWorkingHours(username: string, password: string, success, error) {
+        google.script.run
+            .withSuccessHandler(success)
+            .withFailureHandler(error)
+            .getWorkingHours(username, password);
     }
 }
 

@@ -25,6 +25,63 @@ function getDelayList() {
         };
 }
 
+function getWorkingHours(username: string, password: string) {
+    return [
+        {
+            "date": username,
+            "workingHour": password
+        },
+        {
+            "date": "19/03/01(金)",
+            "workingHour": "9:30"
+        },
+        {
+            "date": "19/03/02(土)",
+            "workingHour": "3:00"
+        },
+        {
+            "date": "19/03/03(日)",
+            "workingHour": " "
+        },
+        {
+            "date": "19/03/04(月)",
+            "workingHour": "9:30"
+        },
+        {
+            "date": "19/03/05(火)",
+            "workingHour": "11:00"
+        },
+        {
+            "date": "19/03/06(水)",
+            "workingHour": "10:30"
+        },
+        {
+            "date": "19/03/07(木)",
+            "workingHour": "9:00"
+        },
+        {
+            "date": "19/03/08(金)",
+            "workingHour": "10:45"
+        },
+        {
+            "date": "19/03/09(土)",
+            "workingHour": " "
+        },
+        {
+            "date": "19/03/10(日)",
+            "workingHour": "5:00"
+        },
+        {
+            "date": "19/03/11(月)",
+            "workingHour": "10:30"
+        },
+        {
+            "date": "19/03/12(火)",
+            "workingHour": "7:30"
+        },
+    ]
+}
+
 function getBookList() {
 
     const response = UrlFetchApp.fetch(

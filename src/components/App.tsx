@@ -16,6 +16,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import FileIcon from '@material-ui/icons/InsertDriveFile';
 import SettingsIcon from '@material-ui/icons/Settings';
 import Sample from './sample/App';
+import GenerateContent from './generate/Generate';
 
 const drawerWidth = 240;
 const useStyles = makeStyles(theme => ({
@@ -90,6 +91,7 @@ interface Props {
 const App: React.FC<Props> = (props) => {
     const classes = useStyles(props);
     const [open, setOpen] = React.useState(false);
+    const [mainContent, setMainContent] = React.useState("generateWeeklyReport");
 
     function handleDrawerOpen() {
         setOpen(true);
@@ -97,6 +99,24 @@ const App: React.FC<Props> = (props) => {
 
     function handleDrawerClose() {
         setOpen(false);
+    }
+
+    function handleMainContent(contentName: string) {
+        setMainContent(contentName);
+    }
+
+    function showMainContent() {
+        switch(mainContent) {
+
+            case "generateWeeklyReport" :
+                return (<GenerateContent />);
+                
+            case "sample" :
+                return (<Sample />);
+            
+            default :
+                return (<></>);
+        } 
     }
     
     return (
@@ -161,14 +181,20 @@ const App: React.FC<Props> = (props) => {
 
                 <List>
 
-                    <ListItem button={true} key='Generate'>
+                    <ListItem
+                        button={true}
+                        key='Generate'
+                        onClick={() => handleMainContent('generateWeeklyReport')}>
                         <ListItemIcon>
-                          <FileIcon className={classes.icon} />
+                            <FileIcon className={classes.icon} />
                         </ListItemIcon>
                         <ListItemText primary='Generate' />
                     </ListItem>
 
-                    <ListItem button={true} key='Settings'>
+                    <ListItem
+                        button={true}
+                        key='Settings'
+                        onClick={() => handleMainContent('sample')}>
                         <ListItemIcon>
                             <SettingsIcon className={classes.icon} />
                         </ListItemIcon>
@@ -182,10 +208,7 @@ const App: React.FC<Props> = (props) => {
             {/* contents */}
             <main className={classes.content}>
                 <div className={clsx(classes.toolbar, classes.toolbarMixins)} />
-                <Typography paragraph={true}>
-                    Main Content
-                </Typography>
-                <Sample />
+                {showMainContent()}
             </main>
 
         </div>
