@@ -9,7 +9,11 @@ import Card from '@material-ui/core/Card';
 import Divider from '@material-ui/core/Divider';
 import GetReportIcon from '@material-ui/icons/SaveAlt';
 import GenerateIcon from '@material-ui/icons/Create';
+import WeekDatePicker from './WeekDatePicker';
 import GasClient from '../../client/gas-client'
+import { startOfWeek } from 'date-fns';
+
+const txtVariant = 'outlined';
 
 const useStyles = makeStyles(theme => ({
     button: {
@@ -54,14 +58,13 @@ const Generate: React.FC<Props> = (props) => {
     /**　入力情報: 勤次郎パスワード */
     const [kinjirouPassword, setkinjirouPassword] = React.useState("");
     /**　取得する期間 */
-    const [dateRange, setDateRange] = React.useState("");
+    const [selectedDate, setSelectedDate] = React.useState(startOfWeek(new Date()));
 
     function parseWorkingHours(whs: WorkingHour[]) {
         if (!whs) {
             return "";
         }
 
-        // parse
         const result: string = whs.map(w => `${w.date} : ${w.workingHour}\n`).join("");
 
         return result;
@@ -72,7 +75,7 @@ const Generate: React.FC<Props> = (props) => {
         GasClient.getWorkingHours(
             kinjirouUserName,
             kinjirouPassword,
-            dateRange,
+            selectedDate ? selectedDate.toLocaleDateString() : null,
             (result: WorkingHour[]) => setWorkingHours(parseWorkingHours(result)),
             () => setErrorMsg("failed to get working hours.")
         );
@@ -90,13 +93,13 @@ const Generate: React.FC<Props> = (props) => {
         setkinjirouPassword(event.target.value);
     };
 
-    const handleDateRangeChange = (event: GetWorkingHoursEvent) => {
-        setDateRange(event.target.value);
+    const handleDateRangeChange = (date: Date) => {
+        setSelectedDate(date);
     }
 
     return (
         <>
-            <h2>Genrate Weekly Report</h2>
+            <h2>Generate</h2>
             
             <Grid container={true} spacing={1}>
 
@@ -107,7 +110,7 @@ const Generate: React.FC<Props> = (props) => {
                         <TextField
                             id="input-vacation"
                             label="休暇の予定"
-                            variant="outlined"
+                            variant={txtVariant}
                             fullWidth={true}
                             multiline={true}
                             margin="dense"
@@ -117,7 +120,7 @@ const Generate: React.FC<Props> = (props) => {
                         <TextField
                             id="input-plan"
                             label="今後の予定"
-                            variant="outlined"
+                            variant={txtVariant}
                             fullWidth={true}
                             multiline={true}
                             margin="dense"
@@ -127,7 +130,7 @@ const Generate: React.FC<Props> = (props) => {
                         <TextField
                             id="input-progress"
                             label="作業状況"
-                            variant="outlined"
+                            variant={txtVariant}
                             fullWidth={true}
                             multiline={true}
                             margin="dense"
@@ -137,7 +140,7 @@ const Generate: React.FC<Props> = (props) => {
                         <TextField
                             id="input-status"
                             label="体調面"
-                            variant="outlined"
+                            variant={txtVariant}
                             fullWidth={true}
                             multiline={true}
                             margin="dense"
@@ -153,9 +156,9 @@ const Generate: React.FC<Props> = (props) => {
                         <h4>週計</h4>
                         <TextField
                             id="input-kinjirou-user"
-                            label="勤次郎ユーザー名"
+                            label="勤次郎のユーザー名"
                             autoComplete="username"
-                            variant="outlined"
+                            variant={txtVariant}
                             fullWidth={true}
                             margin="dense"
                             onChange={handleKinjiroUserNameTextFieldChange}
@@ -163,8 +166,8 @@ const Generate: React.FC<Props> = (props) => {
                         />
                         <TextField
                             id="input-kinjirou-password"
-                            label="パスワード"
-                            variant="outlined"
+                            label="勤次郎のパスワード"
+                            variant={txtVariant}
                             fullWidth={true}
                             type="password"
                             autoComplete="current-password"
@@ -186,19 +189,13 @@ const Generate: React.FC<Props> = (props) => {
                                 label="remember" />
                         </div>
 
-                        <Divider className={classes.divider} />
+                        <Divider
+                            className={classes.divider}/>
 
-                        <TextField
-                            id="select-date-range"
-                            label="取得する期間"
-                            fullWidth={true}
-                            InputLabelProps={{ shrink: true }}
-                            className={classes.textField}
-                            onChange={handleDateRangeChange}
-                            helperText="取得する週を選択してください"
-                            margin="dense"
-                            type="week"
-                            variant="outlined" />
+                        <WeekDatePicker
+                            value={selectedDate}
+                            onWeekDatePickerSelect={handleDateRangeChange} />
+
                         <div style={{textAlign:'right'}}>
                             <Button
                                 variant="contained"
@@ -213,12 +210,13 @@ const Generate: React.FC<Props> = (props) => {
                             id="input-kinjirou-workinghours"
                             label="取得結果"
                             value={workingHours}
-                            variant="outlined"
+                            variant={txtVariant}
                             fullWidth={true}
                             margin="dense"
                             className={classes.textField}
                             multiline={true}
                             rows={7}
+                            // 制御コンポーネント。これがないと取得結果をフィルインした後、テキストエリアに入力できない。
                             onChange={handleWorkingHoursTextFileldChange}
                             InputLabelProps={{ shrink: true }}
                         />
@@ -237,7 +235,7 @@ const Generate: React.FC<Props> = (props) => {
                         <TextField
                             id="input-generate-result"
                             label="生成結果"
-                            variant="outlined"
+                            variant={txtVariant}
                             fullWidth={true}
                             multiline={true}
                             margin="dense"

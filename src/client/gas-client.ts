@@ -28,13 +28,13 @@ const GasClient = {
     getWorkingHours(
         username: string,
         password: string,
-        week: string,
+        startOfWeek: string,
         success: any,
         error: any) {
         google.script.run
             .withSuccessHandler(success)
             .withFailureHandler(error)
-            .getWorkingHours(username, password, week);
+            .getWorkingHours(username, password, startOfWeek);
     }
 }
 

@@ -76,10 +76,10 @@ const dummyResponse =  [
     },
 ];
 
-function getWorkingHours(username: string, password: string, week: string) {
+function getWorkingHours(username: string, password: string, startOfWeek: string) {
     return dummyResponse.map(w => {
         return {
-            date: `${username}/${password}: ${w.date}, ${week}`,
+            date: `${username}/${password}: ${w.date}, ${startOfWeek}`,
             workingHour: toHour(w.workingHour)
         }
     });
