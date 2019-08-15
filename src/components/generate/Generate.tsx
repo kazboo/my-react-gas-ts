@@ -1,18 +1,28 @@
 import React from 'react';
-import {makeStyles, CircularProgress} from '@material-ui/core';
-import { green } from '@material-ui/core/colors';
+import clsx from 'clsx';
+import {makeStyles} from '@material-ui/core';
+import {green, amber} from '@material-ui/core/colors';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Card from '@material-ui/core/Card';
+import Snackbar from '@material-ui/core/Snackbar';
 import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
 import GetReportIcon from '@material-ui/icons/SaveAlt';
 import GenerateIcon from '@material-ui/icons/Create';
+import CloseIcon from '@material-ui/icons/Close';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import WarningIcon from '@material-ui/icons/Warning';
+import ErrorIcon from '@material-ui/icons/Error';
+import InfoIcon from '@material-ui/icons/Info';
 import WeekDatePicker from './WeekDatePicker';
 import GasClient from '../../client/gas-client'
-import { startOfWeek } from 'date-fns';
+import {startOfWeek} from 'date-fns';
 
 const txtVariant = 'outlined';
 
@@ -40,6 +50,32 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
+const useStyles1 = makeStyles(theme => ({
+    success: {
+        backgroundColor: green[600],
+    },
+    error: {
+      backgroundColor: theme.palette.error.dark,
+    },
+    info: {
+        backgroundColor: theme.palette.primary.main,
+    },
+    warning: {
+        backgroundColor: amber[700],
+    },
+    icon: {
+        fontSize: 20,
+    },
+    iconVariant: {
+        opacity: 0.9,
+        marginRight: theme.spacing(1),
+    },
+    message: {
+        display: 'flex',
+        alignItems: 'center',
+    },
+}));
+
 interface WorkingHour {
     date: string;
     actualWorkingHour: string;
@@ -47,6 +83,44 @@ interface WorkingHour {
 
 interface GetWorkingHoursEvent extends React.FormEvent<HTMLInputElement> {
     target: HTMLInputElement;
+}
+
+interface SnackbarProps {
+    className?: string;
+    message?: string;
+    onClose?: any;
+    variant?: 'error' | 'warning' | 'info' | 'success';
+}
+
+const variantIcon = {
+    success: CheckCircleIcon,
+    warning: WarningIcon,
+    error: ErrorIcon,
+    info: InfoIcon,
+};
+
+function MySnackbarContentWrapper(props: SnackbarProps) {
+    const classes = useStyles1(props);
+    const { className, message, onClose, variant } = props;
+    const Icon = variantIcon[variant];
+  
+    return (
+        <SnackbarContent
+            className={clsx(classes[variant], className)}
+            aria-describedby="client-snackbar"
+            message={
+            <span id="client-snackbar" className={classes.message}>
+                <Icon className={clsx(classes.icon, classes.iconVariant)} />
+                {message}
+            </span>
+            }
+            action={[
+            <IconButton key="close" aria-label="close" color="inherit" onClick={onClose}>
+                <CloseIcon className={classes.icon} />
+            </IconButton>,
+            ]}
+        />
+    );
 }
 
 interface Props { }
@@ -58,8 +132,6 @@ const Generate: React.FC<Props> = (props) => {
     const classes = useStyles(props);
     /** 勤務時間取得結果 */
     const [workingHours, setWorkingHours] = React.useState("");
-    /** TODO: エラーメッセージの表示 */
-    const [errorMsg, setErrorMsg] = React.useState("");
     /** 入力情報: 勤次郎ユーザ名 */
     const [kinjirouUserName, setkinjirouUserName] = React.useState("");
     /** 入力情報: 勤次郎パスワード */
@@ -68,6 +140,9 @@ const Generate: React.FC<Props> = (props) => {
     const [selectedDate, setSelectedDate] = React.useState(startOfWeek(new Date()));
     /** 取得ボタンのローディング */
     const [kinjirouLoading, setKinjirouLoading] = React.useState(false);
+    const [snackbarOpen, setSnakberOpen] = React.useState(false);
+    const [snackbarVariant, setSnakberVariant] = React.useState(null);
+    const [resultMessage, setResultMessage] = React.useState(null);
 
     function parseWorkingHours(whs: WorkingHour[]) {
         if (!whs) {
@@ -81,7 +156,7 @@ const Generate: React.FC<Props> = (props) => {
 
     function handleWorkingHoursClick() {
         if (!kinjirouLoading) {
-
+            // ローディングの表示を有効に
             setKinjirouLoading(true);
 
             GasClient.getWorkingHours(
@@ -89,13 +164,22 @@ const Generate: React.FC<Props> = (props) => {
                 kinjirouPassword,
                 selectedDate ? selectedDate.toLocaleDateString() : null,
                 (result: WorkingHour[]) => {
+                    // ローディングの表示を無効に
                     setKinjirouLoading(false);
+                    // スナックバーの表示
+                    setSnakberOpen(true);
+                    setSnakberVariant("success");
+                    setResultMessage("勤務時間の取得に成功しました。");
+                    // 取得結果の表示
                     setWorkingHours(parseWorkingHours(result));
                 },
                 () => {
+                    // ローディングの表示を無効に
                     setKinjirouLoading(false);
-                    alert('failed to get working hours.');
-                    setErrorMsg("failed to get working hours.");
+                    // スナックバーの表示
+                    setSnakberOpen(true);
+                    setSnakberVariant("error");
+                    setResultMessage("勤務時間の取得に失敗しました。");
                 }
             );
         }
@@ -115,6 +199,13 @@ const Generate: React.FC<Props> = (props) => {
 
     const handleDateRangeChange = (date: Date) => {
         setSelectedDate(date);
+    }
+  
+    const handleSnackbarClose = (event: any, reason: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setSnakberOpen(false);
     }
 
     return (
@@ -232,6 +323,23 @@ const Generate: React.FC<Props> = (props) => {
                                 />}
                             </Button>
                         </div>
+
+                        <Snackbar
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'right',
+                            }}
+                            open={snackbarOpen}
+                            autoHideDuration={6000}
+                            onClose={handleSnackbarClose}
+                        >
+                            <MySnackbarContentWrapper
+                                onClose={handleSnackbarClose}
+                                variant={!snackbarVariant ? "info" : snackbarVariant}
+                                message={resultMessage}
+                            />
+                        </Snackbar>
+
                         <TextField
                             id="input-kinjirou-workinghours"
                             label="取得結果"

@@ -82,6 +82,8 @@ function getWorkingHours(username: string, password: string, startOfWeek: string
     const year = startDate.getFullYear();
 
     sleep(5000);
+    // for Error Debug
+    // throw new Error("error occurred.");
     
     return dummyResponse.map(w => {
         return {
