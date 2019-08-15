@@ -77,12 +77,28 @@ const dummyResponse =  [
 ];
 
 function getWorkingHours(username: string, password: string, startOfWeek: string) {
+    const startDate = new Date(startOfWeek);
+    const month = startDate.getMonth() + 1;
+    const year = startDate.getFullYear();
+
+    sleep(5000);
+    
     return dummyResponse.map(w => {
         return {
-            date: `${username}/${password}: ${w.date}, ${startOfWeek}`,
-            workingHour: toHour(w.workingHour)
+            date: `${username}/${password}: ${w.date}, ${year}年${month}月`,
+            actualWorkingHour: toHour(w.workingHour)
         }
     });
+}
+
+function sleep(msec: number){
+    const dt1 = new Date().getTime();
+    while (true){
+        const dt2 = new Date().getTime();
+        if (dt2 - dt1 > msec) {
+            return;
+        }
+    }
 }
 
 function toHour(value: string) {

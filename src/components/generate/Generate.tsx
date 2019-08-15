@@ -1,5 +1,6 @@
 import React from 'react';
-import {makeStyles} from '@material-ui/core';
+import {makeStyles, CircularProgress} from '@material-ui/core';
+import { green } from '@material-ui/core/colors';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -19,14 +20,20 @@ const useStyles = makeStyles(theme => ({
     button: {
         margin: theme.spacing(1),
     },
+    buttonProgress: {
+        color: green[500],
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        marginTop: -12,
+        marginLeft: -12,
+    },
     rightIcon: {
         marginLeft: theme.spacing(1),
     },
     textField: {
         marginTop: '10px',
         marginBottom: '10px',
-    },
-    checkBox: {
     },
     divider: {
         marginBottom: '20px',
@@ -35,7 +42,7 @@ const useStyles = makeStyles(theme => ({
 
 interface WorkingHour {
     date: string;
-    workingHour: string;
+    actualWorkingHour: string;
 }
 
 interface GetWorkingHoursEvent extends React.FormEvent<HTMLInputElement> {
@@ -53,32 +60,45 @@ const Generate: React.FC<Props> = (props) => {
     const [workingHours, setWorkingHours] = React.useState("");
     /** TODO: エラーメッセージの表示 */
     const [errorMsg, setErrorMsg] = React.useState("");
-    /**　入力情報: 勤次郎ユーザ名 */
+    /** 入力情報: 勤次郎ユーザ名 */
     const [kinjirouUserName, setkinjirouUserName] = React.useState("");
-    /**　入力情報: 勤次郎パスワード */
+    /** 入力情報: 勤次郎パスワード */
     const [kinjirouPassword, setkinjirouPassword] = React.useState("");
-    /**　取得する期間 */
+    /** 取得する期間 */
     const [selectedDate, setSelectedDate] = React.useState(startOfWeek(new Date()));
+    /** 取得ボタンのローディング */
+    const [kinjirouLoading, setKinjirouLoading] = React.useState(false);
 
     function parseWorkingHours(whs: WorkingHour[]) {
         if (!whs) {
             return "";
         }
 
-        const result: string = whs.map(w => `${w.date} : ${w.workingHour}\n`).join("");
+        const result: string = whs.map(w => `${w.date} : ${w.actualWorkingHour}\n`).join("");
 
         return result;
     }
 
-    function getWorkingHours() {
-        
-        GasClient.getWorkingHours(
-            kinjirouUserName,
-            kinjirouPassword,
-            selectedDate ? selectedDate.toLocaleDateString() : null,
-            (result: WorkingHour[]) => setWorkingHours(parseWorkingHours(result)),
-            () => setErrorMsg("failed to get working hours.")
-        );
+    function handleWorkingHoursClick() {
+        if (!kinjirouLoading) {
+
+            setKinjirouLoading(true);
+
+            GasClient.getWorkingHours(
+                kinjirouUserName,
+                kinjirouPassword,
+                selectedDate ? selectedDate.toLocaleDateString() : null,
+                (result: WorkingHour[]) => {
+                    setKinjirouLoading(false);
+                    setWorkingHours(parseWorkingHours(result));
+                },
+                () => {
+                    setKinjirouLoading(false);
+                    alert('failed to get working hours.');
+                    setErrorMsg("failed to get working hours.");
+                }
+            );
+        }
     }
 
     const handleWorkingHoursTextFileldChange = (event: GetWorkingHoursEvent) => {
@@ -157,6 +177,7 @@ const Generate: React.FC<Props> = (props) => {
                         <TextField
                             id="input-kinjirou-user"
                             label="勤次郎のユーザー名"
+                            required={true}
                             autoComplete="username"
                             variant={txtVariant}
                             fullWidth={true}
@@ -167,6 +188,7 @@ const Generate: React.FC<Props> = (props) => {
                         <TextField
                             id="input-kinjirou-password"
                             label="勤次郎のパスワード"
+                            required={true}
                             variant={txtVariant}
                             fullWidth={true}
                             type="password"
@@ -183,7 +205,6 @@ const Generate: React.FC<Props> = (props) => {
                                         defaultChecked
                                         color="default"
                                         value="remember"
-                                        className={classes.checkBox}
                                     />
                                 }
                                 label="remember" />
@@ -201,9 +222,14 @@ const Generate: React.FC<Props> = (props) => {
                                 variant="contained"
                                 color="primary"
                                 className={classes.button}
-                                onClick={getWorkingHours}>
+                                disabled={kinjirouLoading}
+                                onClick={handleWorkingHoursClick}>
                                 取得
                                 <GetReportIcon className={classes.rightIcon} />
+                                {kinjirouLoading && <CircularProgress
+                                    size={24}
+                                    className={classes.buttonProgress}
+                                />}
                             </Button>
                         </div>
                         <TextField
