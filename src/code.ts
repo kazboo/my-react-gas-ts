@@ -5,6 +5,12 @@ function doGet() {
         .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 };
 
+function getAccount() {
+    return {
+        email: Session.getActiveUser().getEmail(),
+    }
+}
+
 function getDelayList() {
     return {
             message: `success!`,

@@ -25,6 +25,13 @@ const GasClient = {
             .getBookJoinList();
     },
 
+    getAccount(success: any, error: any) {
+        google.script.run
+            .withSuccessHandler(success)
+            .withFailureHandler(error)
+            .getAccount();
+    },
+
     getWorkingHours(
         username: string,
         password: string,

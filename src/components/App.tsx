@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core';
 import Drawer from '@material-ui/core/Drawer';
@@ -16,12 +16,16 @@ import ListItemText from '@material-ui/core/ListItemText';
 import FileIcon from '@material-ui/icons/InsertDriveFile';
 import SettingsIcon from '@material-ui/icons/Settings';
 import Sample from './sample/App';
+import AccountButton from './AccountButton';
 import GenerateContent from './generate/Generate';
 
 const drawerWidth = 240;
 const useStyles = makeStyles(theme => ({
     root: {
         display: 'flex',
+    },
+    title: {
+      flexGrow: 1,
     },
     appBar: {
         zIndex: theme.zIndex.drawer + 1,
@@ -144,9 +148,11 @@ const App: React.FC<Props> = (props) => {
                         <MenuIcon />
                     </IconButton>
 
-                    <Typography variant='h6' noWrap={true}>
+                    <Typography variant='h6' noWrap={true} className={classes.title}>
                         Weekly Report
                     </Typography>
+
+                    <AccountButton />
 
                 </Toolbar>
             </AppBar>
