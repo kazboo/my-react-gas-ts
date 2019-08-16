@@ -1,8 +1,9 @@
 import React from 'react';
 import clsx from 'clsx';
-import {makeStyles} from '@material-ui/core';
+import {makeStyles, withStyles} from '@material-ui/core';
 import {green, amber} from '@material-ui/core/colors';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -13,6 +14,10 @@ import Snackbar from '@material-ui/core/Snackbar';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
+import AccountIcon from '@material-ui/icons/AccountBox';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+import LockIcon from '@material-ui/icons/Lock';
 import GetReportIcon from '@material-ui/icons/SaveAlt';
 import GenerateIcon from '@material-ui/icons/Create';
 import CloseIcon from '@material-ui/icons/Close';
@@ -81,7 +86,7 @@ interface WorkingHour {
     actualWorkingHour: string;
 }
 
-interface GetWorkingHoursEvent extends React.FormEvent<HTMLInputElement> {
+interface FormEvent extends React.FormEvent<HTMLInputElement> {
     target: HTMLInputElement;
 }
 
@@ -140,9 +145,18 @@ const Generate: React.FC<Props> = (props) => {
     const [selectedDate, setSelectedDate] = React.useState(startOfWeek(new Date()));
     /** 取得ボタンのローディング */
     const [kinjirouLoading, setKinjirouLoading] = React.useState(false);
+    /** 取得結果のメッセージを表示するスナックバー(表示/非表示) */
     const [snackbarOpen, setSnakberOpen] = React.useState(false);
+    /** 取得結果のメッセージを表示するスナックバー(種類) */
     const [snackbarVariant, setSnakberVariant] = React.useState(null);
+    /** 取得結果のメッセージを表示するスナックバー(メッセージ) */
     const [resultMessage, setResultMessage] = React.useState(null);
+    /** 入力エラーかどうか(勤次郎ユーザー名) */
+    const [usernameError, setUsernameError] = React.useState(true);
+    /** 入力エラーかどうか(勤次郎パスワード) */
+    const [passwordError, setPasswordError] = React.useState(true);
+    /** パスワードの表示/非表示(勤次郎パスワード) */
+    const [showPassword, setShowPassword] = React.useState(false);
 
     function parseWorkingHours(whs: WorkingHour[]) {
         if (!whs) {
@@ -185,16 +199,24 @@ const Generate: React.FC<Props> = (props) => {
         }
     }
 
-    const handleWorkingHoursTextFileldChange = (event: GetWorkingHoursEvent) => {
+    const handleWorkingHoursTextFileldChange = (event: FormEvent) => {
         setWorkingHours(event.target.value);
     };
     
-    const handleKinjiroUserNameTextFieldChange = (event: GetWorkingHoursEvent) => {
-        setkinjirouUserName(event.target.value);
+    const handleKinjiroUserNameTextFieldChange = (event: FormEvent) => {
+        const value: string = event.target.value;
+        // 必須チェック
+        setUsernameError(value === '');
+        // 入力値を保持する
+        setkinjirouUserName(value);
     };
 
-    const handleKinjiroPasswordTextFieldChange = (event: GetWorkingHoursEvent) => {
-        setkinjirouPassword(event.target.value);
+    const handleKinjiroPasswordTextFieldChange = (event: FormEvent) => {
+        const value: string = event.target.value;
+        // 必須チェック
+        setPasswordError(value === '');
+        // 入力値を保持する
+        setkinjirouPassword(value);
     };
 
     const handleDateRangeChange = (date: Date) => {
@@ -207,6 +229,14 @@ const Generate: React.FC<Props> = (props) => {
         }
         setSnakberOpen(false);
     }
+
+    const handleClickShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
+    
+    const handleMouseDownPassword = (event: any) => {
+        event.preventDefault();
+    };
 
     return (
         <>
@@ -275,6 +305,8 @@ const Generate: React.FC<Props> = (props) => {
                             margin="dense"
                             onChange={handleKinjiroUserNameTextFieldChange}
                             className={classes.textField}
+                            error={usernameError}
+                            helperText={usernameError ? "必須です。" : " "}
                         />
                         <TextField
                             id="input-kinjirou-password"
@@ -282,11 +314,27 @@ const Generate: React.FC<Props> = (props) => {
                             required={true}
                             variant={txtVariant}
                             fullWidth={true}
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             autoComplete="current-password"
                             margin="dense"
                             onChange={handleKinjiroPasswordTextFieldChange}
                             className={classes.textField}
+                            error={passwordError}
+                            helperText={passwordError ? "必須です。" : " "}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            edge="end"
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                        >
+                                        {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
                         />
                         <div>
                             <FormControlLabel
@@ -313,7 +361,8 @@ const Generate: React.FC<Props> = (props) => {
                                 variant="contained"
                                 color="primary"
                                 className={classes.button}
-                                disabled={kinjirouLoading}
+                                // ローディング中、あるいはバリデートエラーがある場合は非活性化
+                                disabled={kinjirouLoading || (passwordError || usernameError)}
                                 onClick={handleWorkingHoursClick}>
                                 取得
                                 <GetReportIcon className={classes.rightIcon} />

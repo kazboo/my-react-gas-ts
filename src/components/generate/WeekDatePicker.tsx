@@ -4,8 +4,8 @@ import React from 'react';
 import {makeStyles} from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
+    MuiPickersUtilsProvider,
+    KeyboardDatePicker,
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import format from "date-fns/format";
