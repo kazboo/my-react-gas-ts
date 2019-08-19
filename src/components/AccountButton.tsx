@@ -3,9 +3,13 @@ import { makeStyles } from '@material-ui/core';
 import ArrowDropDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
+import MenuItem from '@material-ui/core/MenuItem';
+import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 import Popover from '@material-ui/core/Popover';
 import GasClient from '../client/gas-client';
+
+const SIGNOUT_URL: string = "https://accounts.google.com/Logout";
 
 const useStyles = makeStyles(theme => ({
     typography: {
@@ -47,6 +51,12 @@ const AccountButton: React.FC<Props> = (props) => {
         setAnchorEl(null);
     }
 
+    function handleSignOut() {
+        // iframeを使用しているためtopを指定する
+        // (window.location.hrefだと「accounts.google.com で接続が拒否されました。」エラー)。
+        window.top.location.href=SIGNOUT_URL;
+    }
+
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
     
@@ -74,6 +84,8 @@ const AccountButton: React.FC<Props> = (props) => {
                 }}
             >
                 <Typography className={classes.typography}>{userEmail}</Typography>
+                <Divider />
+                <MenuItem onClick={handleSignOut}>Sign out</MenuItem>
             </Popover>
         </>
     );
